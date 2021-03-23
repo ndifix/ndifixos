@@ -44,6 +44,21 @@ EFI_STATUS SaveMemoryMapToFile(struct MemoryMap* memmap, EFI_FILE_PROTOCOL* dir,
   return EFI_SUCCESS;
 }
 
+// ブートサービスを停止します
+void StopBootService(EFI_HANDLE image_handle, struct MemoryMap* memmap) {
+  EFI_STATUS status = GetMemoryMap(memmap);
+  if (EFI_ERROR(status)) {
+    Print(L"failed to get memory map: %r\n", status);
+    Halt();
+  }
+
+  status = gBS->ExitBootServices(image_handle, memmap->map_key);
+  if (EFI_ERROR(status)) {
+    Print(L"could not exit boot service: %r\n", status);
+    Halt();
+  }
+}
+
 // エントリーポイント
 EFI_STATUS EFIAPI UefiMain(EFI_HANDLE image_handle,
                            EFI_SYSTEM_TABLE* system_table) {
@@ -65,6 +80,9 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE image_handle,
     Halt();
   }
   Print(L"kernel read\n");
+
+  // stop boot service
+  StopBootService(image_handle, &memmap);
 
   Halt();
 
