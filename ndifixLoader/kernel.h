@@ -5,7 +5,8 @@
 #include <Library/UefiLib.h>
 
 // カーネルを読み込みます
-EFI_STATUS ReadKernel(EFI_FILE_PROTOCOL* dir, CHAR16* file_name) {
+EFI_STATUS ReadKernel(EFI_FILE_PROTOCOL* dir, CHAR16* file_name,
+                      EFI_PHYSICAL_ADDRESS kernel_base_addr) {
   EFI_STATUS status;
   EFI_FILE_PROTOCOL* kernel_file;
   dir->Open(dir, &kernel_file, file_name, EFI_FILE_MODE_READ, 0);
@@ -18,7 +19,6 @@ EFI_STATUS ReadKernel(EFI_FILE_PROTOCOL* dir, CHAR16* file_name) {
   EFI_FILE_INFO* file_info = (EFI_FILE_INFO*)file_info_buffer;
   UINTN kernel_file_size = file_info->FileSize;
 
-  EFI_PHYSICAL_ADDRESS kernel_base_addr = 0x100000;
   status = gBS->AllocatePages(AllocateAddress, EfiLoaderData,
                               (kernel_file_size + 0xfff) / 0x1000,
                               &kernel_base_addr);
@@ -30,4 +30,12 @@ EFI_STATUS ReadKernel(EFI_FILE_PROTOCOL* dir, CHAR16* file_name) {
 
   Print(L"Kernel: 0x%0lx (%lu bytes)\n", kernel_base_addr, kernel_file_size);
   return EFI_SUCCESS;
+}
+
+// カーネルを起動します
+void CallKernel(EFI_PHYSICAL_ADDRESS kernel_base_addr) {
+  typedef void EntryPointType(void);
+  UINT64 entry_addr = *(UINT64*)(kernel_base_addr + 24);
+  EntryPointType* entry_point = (EntryPointType*)entry_addr;
+  entry_point();
 }
