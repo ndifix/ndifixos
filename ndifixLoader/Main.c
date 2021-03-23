@@ -74,7 +74,8 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE image_handle,
   SaveMemoryMapToFile(&memmap, root_dir, L"memmap");
 
   // read kernel
-  status = ReadKernel(root_dir, L"kernel.elf");
+  EFI_PHYSICAL_ADDRESS kernel_base_addr = 0x100000;
+  status = ReadKernel(root_dir, L"kernel.elf", kernel_base_addr);
   if (EFI_ERROR(status)) {
     Print(L"error occured while reading kernel\n");
     Halt();
@@ -83,6 +84,9 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE image_handle,
 
   // stop boot service
   StopBootService(image_handle, &memmap);
+
+  // call kernel
+  CallKernel(kernel_base_addr);
 
   Halt();
 
