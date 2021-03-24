@@ -33,9 +33,10 @@ EFI_STATUS ReadKernel(EFI_FILE_PROTOCOL* dir, CHAR16* file_name,
 }
 
 // カーネルを起動します
-void CallKernel(EFI_PHYSICAL_ADDRESS kernel_base_addr) {
-  typedef void EntryPointType(void);
+void CallKernel(EFI_PHYSICAL_ADDRESS kernel_base_addr,
+                EFI_GRAPHICS_OUTPUT_PROTOCOL* gop) {
+  typedef void EntryPointType(UINT64, UINT64);
   UINT64 entry_addr = *(UINT64*)(kernel_base_addr + 24);
   EntryPointType* entry_point = (EntryPointType*)entry_addr;
-  entry_point();
+  entry_point(gop->Mode->FrameBufferBase, gop->Mode->FrameBufferSize);
 }

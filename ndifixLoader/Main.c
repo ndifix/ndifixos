@@ -74,9 +74,9 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE image_handle,
   struct MemoryMap memmap = {sizeof(memmap_buf), memmap_buf, 0, 0, 0, 0};
   SaveMemoryMapToFile(&memmap, root_dir, L"memmap");
 
-  // paint screen white
+  // get GOP
   EFI_GRAPHICS_OUTPUT_PROTOCOL* gop = NULL;
-  PaintScreenWhite(image_handle, gop);
+  OpenGOP(image_handle, &gop);
   Print(L"Resolution: %ux%u\n", gop->Mode->Info->HorizontalResolution,
         gop->Mode->Info->VerticalResolution);
   Print(L"Pixel Format: %s\n",
@@ -100,7 +100,7 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE image_handle,
   StopBootService(image_handle, &memmap);
 
   // call kernel
-  CallKernel(kernel_base_addr);
+  CallKernel(kernel_base_addr, gop);
 
   Halt();
 
