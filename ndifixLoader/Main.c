@@ -6,6 +6,7 @@
 
 #include "kernel.h"
 #include "memory_map.h"
+#include "printScreen.h"
 
 void Halt(void) {
   while (1) __asm__("hlt");
@@ -72,6 +73,19 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE image_handle,
   CHAR8 memmap_buf[1024 * 16];
   struct MemoryMap memmap = {sizeof(memmap_buf), memmap_buf, 0, 0, 0, 0};
   SaveMemoryMapToFile(&memmap, root_dir, L"memmap");
+
+  // paint screen white
+  EFI_GRAPHICS_OUTPUT_PROTOCOL* gop = NULL;
+  PaintScreenWhite(image_handle, gop);
+  Print(L"Resolution: %ux%u\n", gop->Mode->Info->HorizontalResolution,
+        gop->Mode->Info->VerticalResolution);
+  Print(L"Pixel Format: %s\n",
+        GetPixelFormatUnicode(gop->Mode->Info->PixelFormat));
+  Print(L"%u pixels/line\n", gop->Mode->Info->PixelsPerScanLine);
+  Print(L"Frame Buffer: 0x%0lx - 0x%0lx, Size: %lu bytes\n",
+        gop->Mode->FrameBufferBase,
+        gop->Mode->FrameBufferBase + gop->Mode->FrameBufferSize,
+        gop->Mode->FrameBufferSize);
 
   // read kernel
   EFI_PHYSICAL_ADDRESS kernel_base_addr = 0x100000;
