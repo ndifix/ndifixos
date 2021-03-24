@@ -38,13 +38,3 @@ EFI_STATUS OpenGOP(EFI_HANDLE image_handle,
 
   return EFI_SUCCESS;
 }
-
-// 画面を白一色で描画します
-void PaintScreenWhite(EFI_HANDLE image_handle,
-                      EFI_GRAPHICS_OUTPUT_PROTOCOL* gop) {
-  OpenGOP(image_handle, &gop);
-  UINT8* frame_buffer = (UINT8*)gop->Mode->FrameBufferBase;
-  for (UINTN i = 0; i < gop->Mode->FrameBufferSize; ++i) {
-    frame_buffer[i] = 0xFF;
-  }
-}
