@@ -1,5 +1,5 @@
 TARGET = kernel.elf
-OBJS = main.o
+OBJS = main.o ascii.o
 
 CXXFLAGS += -O2 -Wall -g --target=x86_64-elf -ffreestanding -mno-red-zone \
 	    -fno-exceptions -fno-rtti -std=c++17
@@ -16,6 +16,12 @@ clean:
 kernel.elf: $(OBJS) Makefile
 	ld.lld $(LDFLAGS) -o kernel.elf $(OBJS) -lc
 
+ascii.bin: ascii.txt
+	../tool/makefont.py -o $@ ascii.txt
+
+ascii.o: ascii.bin
+	objcopy -I binary -O elf64-x86-64 -B i386:x86-64 ascii.bin $@
+
 %.o: %.cpp Makefile
 	clang++ $(CPPFLAGS) $(CXXFLAGS) -c $<
 
@@ -29,4 +35,3 @@ depends:
 	$(MAKE) $(DEPENDS)
 
 -include $(DEPENDS)
-
