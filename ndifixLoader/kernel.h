@@ -4,6 +4,8 @@
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiLib.h>
 
+#include "frame_buffer_config.h"
+
 // カーネルを読み込みます
 EFI_STATUS ReadKernel(EFI_FILE_PROTOCOL* dir, CHAR16* file_name,
                       EFI_PHYSICAL_ADDRESS kernel_base_addr) {
@@ -34,9 +36,9 @@ EFI_STATUS ReadKernel(EFI_FILE_PROTOCOL* dir, CHAR16* file_name,
 
 // カーネルを起動します
 void CallKernel(EFI_PHYSICAL_ADDRESS kernel_base_addr,
-                EFI_GRAPHICS_OUTPUT_PROTOCOL* gop) {
-  typedef void EntryPointType(UINT64, UINT64);
+                struct FrameBufferConfig* config) {
+  typedef void EntryPointType(const struct FrameBufferConfig*);
   UINT64 entry_addr = *(UINT64*)(kernel_base_addr + 24);
   EntryPointType* entry_point = (EntryPointType*)entry_addr;
-  entry_point(gop->Mode->FrameBufferBase, gop->Mode->FrameBufferSize);
+  entry_point(config);
 }
