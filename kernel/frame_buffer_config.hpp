@@ -1,0 +1,17 @@
+#pragma once
+
+#include <stdint.h>
+
+namespace ndifixos_FrameBuffer {
+enum PixelFormat { kPixelRGBResv8BitPerColor, kPixelBGResv8BitPerColor };
+
+struct FrameBufferConfig {
+  uint8_t* frame_buffer_base;
+  uint32_t frame_buffer_size;
+  uint32_t pixels_per_scan_line;
+  uint32_t h_resolution;
+  uint32_t v_resolution;
+  enum PixelFormat pixel_format;
+};
+
+}  // namespace ndifixos_FrameBuffer

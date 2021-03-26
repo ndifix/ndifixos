@@ -4,9 +4,10 @@
 #include <Protocol/DiskIo2.h>
 #include <Protocol/LoadedImage.h>
 
+#include "frame_buffer_config.h"
+#include "graphics.h"
 #include "kernel.h"
 #include "memory_map.h"
-#include "printScreen.h"
 
 void Halt(void) {
   while (1) __asm__("hlt");
@@ -76,7 +77,13 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE image_handle,
 
   // get GOP
   EFI_GRAPHICS_OUTPUT_PROTOCOL* gop = NULL;
+  struct FrameBufferConfig fb_config;
   OpenGOP(image_handle, &gop);
+  status = SetConfig(gop, &fb_config);
+  if (EFI_ERROR(status)) {
+    Print(L"unsupported pixel format\n");
+    Halt();
+  }
   Print(L"Resolution: %ux%u\n", gop->Mode->Info->HorizontalResolution,
         gop->Mode->Info->VerticalResolution);
   Print(L"Pixel Format: %s\n",
@@ -100,7 +107,7 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE image_handle,
   StopBootService(image_handle, &memmap);
 
   // call kernel
-  CallKernel(kernel_base_addr, gop);
+  CallKernel(kernel_base_addr, &fb_config);
 
   Halt();
 

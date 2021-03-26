@@ -4,6 +4,8 @@
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiLib.h>
 
+#include "frame_buffer_config.h"
+
 // ピクセルフォーマットを文字列へ変換します
 const CHAR16* GetPixelFormatUnicode(EFI_GRAPHICS_PIXEL_FORMAT fmt) {
   switch (fmt) {
@@ -36,5 +38,26 @@ EFI_STATUS OpenGOP(EFI_HANDLE image_handle,
 
   FreePool(gop_handles);
 
+  return EFI_SUCCESS;
+}
+
+EFI_STATUS SetConfig(EFI_GRAPHICS_OUTPUT_PROTOCOL* gop,
+                     struct FrameBufferConfig* config) {
+  config->frame_buffer_base = (UINT8*)gop->Mode->FrameBufferBase;
+  config->frame_buffer_size = gop->Mode->FrameBufferSize;
+  config->pixels_per_scan_line = gop->Mode->Info->PixelsPerScanLine;
+  config->h_resolution = gop->Mode->Info->HorizontalResolution;
+  config->v_resolution = gop->Mode->Info->VerticalResolution;
+
+  switch (gop->Mode->Info->PixelFormat) {
+    case PixelRedGreenBlueReserved8BitPerColor:
+      config->pixel_format = kPixelRGBResv8BitPerColor;
+      break;
+    case PixelBlueGreenRedReserved8BitPerColor:
+      config->pixel_format = kPixelBGResv8BitPerColor;
+      break;
+    default:
+      return EFI_INVALID_PARAMETER;
+  }
   return EFI_SUCCESS;
 }
