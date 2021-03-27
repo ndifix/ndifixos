@@ -13,7 +13,7 @@ struct PixelColor {
 // ピクセル毎に描画を管理します
 class PixelWriter {
  private:
-  const ndifixos_FrameBuffer::FrameBufferConfig config;
+  ndifixos_FrameBuffer::FrameBufferConfig config;
 
  protected:
   uint8_t* PixelAt(int x, int y) {
@@ -21,6 +21,7 @@ class PixelWriter {
   }
 
  public:
+  PixelWriter() {}
   PixelWriter(const ndifixos_FrameBuffer::FrameBufferConfig& c) : config(c) {}
   ~PixelWriter() = default;
 
