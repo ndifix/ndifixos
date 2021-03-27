@@ -1,6 +1,7 @@
 TARGET = kernel.elf
-OBJS = main.o ascii.o
+OBJS = main.o ascii.o newlib_support.o
 
+CFLAGS   += -O2 -Wall -g --target=x86_64-elf -ffreestanding -mno-red-zone
 CXXFLAGS += -O2 -Wall -g --target=x86_64-elf -ffreestanding -mno-red-zone \
 	    -fno-exceptions -fno-rtti -std=c++17
 LDFLAGS += --entry KernelMain -z norelro --image-base 0x110000 --static
@@ -25,10 +26,21 @@ ascii.o: ascii.bin
 %.o: %.cpp Makefile
 	clang++ $(CPPFLAGS) $(CXXFLAGS) -c $<
 
+%.o: %.c Makefile
+	clang $(CPPFLAGS) $(CFLAGS) -c $<
+
 .%.d: %.cpp
 	clang++ $(CPPFLAGS) $(CXXFLAGS) -MM $< > $@
 	$(eval OBJ = $(<:.cpp=.o))
 	sed --in-place 's|$(notfir $(OBJ))|$(OBJ)|' $@
+
+.%.d: %.c
+	clang $(CPPFLAGS) $(CFLAGS) -MM $< > $@
+	$(eval OBJ = $(<:.c=.o))
+	sed --in-place 's|$(notdir $(OBJ))|$(OBJ)|' $@
+
+.%.d: %.bin
+	touch $@
 
 .PHONY: depends
 depends:
