@@ -1,9 +1,10 @@
 TARGET = kernel.elf
 OBJS = main.o
 
-CPPFLAGS += -I/home/ndifix/osbook/devenv/x86_64-elf/include/c++/v1 -I/home/ndifix/osbook/devenv/x86_64-elf/include -I/home/ndifix/osbook/devenv/x86_64-elf/include/freetype2 -nostdlibinc -D__ELF__ -D_LDBL_EQ_DBL -D_GNU_SOURCE -D_POSIX_TIMERS
-CXXFLAGS += -O2 -Wall -g --target=x86_64-elf -ffreestanding -mno-red-zone -fno-exceptions -fno-rtti -std=c++17
+CXXFLAGS += -O2 -Wall -g --target=x86_64-elf -ffreestanding -mno-red-zone \
+	    -fno-exceptions -fno-rtti -std=c++17
 LDFLAGS += --entry KernelMain -z norelro --image-base 0x100000 --static
+DEPENDS = $(join $(dir $(OBJS)), $(addprefix .,$(notdir $(OBJS:.o=.d))))
 
 .PHONY: all
 all: $(TARGET)
@@ -13,7 +14,19 @@ clean:
 	rm -rf *.o
 
 kernel.elf: $(OBJS) Makefile
-	ld.lld $(LDFLAGS) -o kernel.elf $(OBJS)
+	ld.lld $(LDFLAGS) -o kernel.elf $(OBJS) -lc
 
 %.o: %.cpp Makefile
 	clang++ $(CPPFLAGS) $(CXXFLAGS) -c $<
+
+.%.d: %.cpp
+	clang++ $(CPPFLAGS) $(CXXFLAGS) -MM $< > $@
+	$(eval OBJ = $(<:.cpp=.o))
+	sed --in-place 's|$(notfir $(OBJ))|$(OBJ)|' $@
+
+.PHONY: depends
+depends:
+	$(MAKE) $(DEPENDS)
+
+-include $(DEPENDS)
+
