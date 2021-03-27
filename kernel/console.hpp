@@ -22,8 +22,8 @@ class Console {
 
  public:
   Console(const ndifixos_graphics::PixelWriter& writer,
-          ndifixos_graphics::PixelColor back_color = {0, 0, 0},
-          ndifixos_graphics::PixelColor char_color = {0xff, 0xff, 0xff})
+          ndifixos_graphics::PixelColor back_color = {238, 210, 238},
+          ndifixos_graphics::PixelColor char_color = {0, 0, 0})
       : buffer{} {
     this->writer = writer;
     back_c = back_color;
