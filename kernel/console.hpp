@@ -22,7 +22,7 @@ class Console {
     if (cursor_R == Rows - 1) {
       // 画面を塗りつぶしてから
       // 全ての文字を上に一段上げる。
-      for (int x = 0; x < char_width * Collumns; ++x) {
+      for (int x = 0; x < (char_width + 1) * Collumns; ++x) {
         for (int y = 0; y < char_height * Rows; ++y) {
           writer.Write(x, y, back_c);
         }
