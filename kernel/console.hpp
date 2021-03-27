@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdio>
 #include <cstring>
 
 #include "font.hpp"
@@ -39,18 +40,7 @@ class Console {
     }
   }
 
- public:
-  Console(const ndifixos_graphics::PixelWriter& writer,
-          ndifixos_graphics::PixelColor back_color = {0, 0, 0},
-          ndifixos_graphics::PixelColor char_color = {0xff, 0xff, 0xff})
-      : buffer{} {
-    this->writer = writer;
-    back_c = back_color;
-    char_c = char_color;
-    cursor_R = cursor_C = 0;
-  }
-
-  void Write(const char* s) {
+  void Print(const char* s) {
     while (*s) {
       if (*s == '\n' || cursor_C == Collumns) {
         NewLine();
@@ -62,6 +52,30 @@ class Console {
       }
       ++s;
     }
+  }
+
+ public:
+  Console(const ndifixos_graphics::PixelWriter& writer,
+          ndifixos_graphics::PixelColor back_color = {0, 0, 0},
+          ndifixos_graphics::PixelColor char_color = {0xff, 0xff, 0xff})
+      : buffer{} {
+    this->writer = writer;
+    back_c = back_color;
+    char_c = char_color;
+    cursor_R = cursor_C = 0;
+  }
+
+  int Write(const char* format, ...) {
+    va_list ap;
+    int result;
+    char s[1024];
+
+    va_start(ap, format);
+    result = vsprintf(s, format, ap);
+    va_end(ap);
+
+    Print(s);
+    return result;
   }
 };
 }  // namespace ndifixos_console
