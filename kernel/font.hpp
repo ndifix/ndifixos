@@ -18,9 +18,8 @@ const uint8_t* GetFont(char c) {
   return &_binary_ascii_bin_start + index;
 }
 
-void WriteAscii(ndifixos_graphics::PixelWriter& writer, int x, int y, char c,
-                const ndifixos_graphics::PixelColor& color = {0xff, 0xff,
-                                                              0xff}) {
+void const WriteAscii(ndifixos_graphics::PixelWriter& writer, int x, int y,
+                      char c, const ndifixos_graphics::PixelColor color) {
   const uint8_t* font = GetFont(c);
 
   for (int dy = 0; dy < 16; ++dy) {
@@ -33,8 +32,7 @@ void WriteAscii(ndifixos_graphics::PixelWriter& writer, int x, int y, char c,
 }
 
 void WriteString(ndifixos_graphics::PixelWriter& writer, int x, int y, char* c,
-                 const ndifixos_graphics::PixelColor& color = {0xff, 0xff,
-                                                               0xff}) {
+                 const ndifixos_graphics::PixelColor& color) {
   for (char* pc = c; *pc != '\0'; pc++) {
     WriteAscii(writer, x, y, *pc, color);
     x += 9;
