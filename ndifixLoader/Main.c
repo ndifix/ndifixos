@@ -95,7 +95,7 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE image_handle,
         gop->Mode->FrameBufferSize);
 
   // read kernel
-  EFI_PHYSICAL_ADDRESS kernel_base_addr = 0x100000;
+  EFI_PHYSICAL_ADDRESS kernel_base_addr = 0x110000;
   status = ReadKernel(root_dir, L"kernel.elf", kernel_base_addr);
   if (EFI_ERROR(status)) {
     Print(L"error occured while reading kernel\n");
