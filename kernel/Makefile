@@ -1,5 +1,5 @@
 TARGET = kernel.elf
-OBJS = main.o ascii.o newlib_support.o console.o
+OBJS = main.o ascii.o newlib_support.o console.o pci.o asmfunc.o
 
 CFLAGS   += -O2 -Wall -g --target=x86_64-elf -ffreestanding -mno-red-zone
 CXXFLAGS += -O2 -Wall -g --target=x86_64-elf -ffreestanding -mno-red-zone \
@@ -22,6 +22,9 @@ ascii.bin: ascii.txt
 
 ascii.o: ascii.bin
 	objcopy -I binary -O elf64-x86-64 -B i386:x86-64 ascii.bin $@
+
+%.o: %.asm Makefile
+	nasm -f elf64 -o $@ $<
 
 %.o: %.cpp Makefile
 	clang++ $(CPPFLAGS) $(CXXFLAGS) -c $<
