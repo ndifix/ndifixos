@@ -30,35 +30,6 @@ class ClassCode {
   }
 };
 
-// PCI デバイスを操作するための基礎データを格納する
-class Device {
- private:
-  uint8_t bus, device_num, function, header_type;
-  uint16_t device_id, vender_id;
-  ClassCode class_code;
-
- public:
-  Device() {}
-  Device(uint8_t bus, uint8_t device_num, uint8_t function, uint8_t header_type,
-         uint16_t device_id, uint16_t vender_id, ClassCode class_code) {
-    this->bus = bus;
-    this->device_num = device_num;
-    this->function = function;
-    this->header_type = header_type;
-    this->device_id = device_id;
-    this->vender_id = vender_id;
-    this->class_code = class_code;
-  }
-
-  inline uint8_t Bus() { return bus; }
-  inline uint8_t Device_num() { return device_num; }
-  inline uint8_t Function() { return function; }
-  inline uint8_t Header_type() { return header_type; }
-  inline uint16_t Device_id() { return device_id; }
-  inline uint16_t Vender_id() { return vender_id; }
-  inline ClassCode Class_code() { return class_code; }
-};
-
 class PCIio {
  private:
   // CONFIG_ADDRESS レジスタの IO ポートアドレス
@@ -107,6 +78,35 @@ class PCIio {
    *         subordinate bus num  secoundary path num  revision num
    */
   uint32_t ReadBusNumbers(uint8_t bus, uint8_t device, uint8_t function);
+};
+
+// PCI デバイスを操作するための基礎データを格納する
+class Device {
+ private:
+  uint8_t bus, device_num, function, header_type;
+  uint16_t device_id, vender_id;
+  ClassCode class_code;
+
+ public:
+  Device() {}
+  Device(uint8_t bus, uint8_t device_num, uint8_t function, uint8_t header_type,
+         uint16_t device_id, uint16_t vender_id, ClassCode class_code) {
+    this->bus = bus;
+    this->device_num = device_num;
+    this->function = function;
+    this->header_type = header_type;
+    this->device_id = device_id;
+    this->vender_id = vender_id;
+    this->class_code = class_code;
+  }
+
+  inline uint8_t Bus() { return bus; }
+  inline uint8_t Device_num() { return device_num; }
+  inline uint8_t Function() { return function; }
+  inline uint8_t Header_type() { return header_type; }
+  inline uint16_t Device_id() { return device_id; }
+  inline uint16_t Vender_id() { return vender_id; }
+  inline ClassCode Class_code() { return class_code; }
 };
 
 class PCIManager {

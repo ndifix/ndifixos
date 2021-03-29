@@ -15,7 +15,7 @@ extern "C" void KernelMain(
   ndifixos::pci::PCIManager pci;
   pci.ScanAllBus();
   for (int i = 0; i < pci.DeviceCount(); i++) {
-    console.Write("bus:%d device:%d func:%d head:%d\n", pci.device(i).Bus(),
+    console.Write("bus:%3d device:%2d func:%1d head:%3d\n", pci.device(i).Bus(),
                   pci.device(i).Device_num(), pci.device(i).Function(),
                   pci.device(i).Header_type());
   }
