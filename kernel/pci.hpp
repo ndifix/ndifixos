@@ -28,6 +28,12 @@ class ClassCode {
   bool Match(uint8_t b, uint8_t s, uint8_t i) {
     return Match(b, s) && i == interface;
   }
+
+  // USB コントローラであるとき true
+  bool isUSB() { return Match(0x0cu, 0x03u); }
+
+  // xHC コントローラであるとき true
+  bool isxHC() { return isUSB() && interface == 0x30u; }
 };
 
 class PCIio {
@@ -107,6 +113,12 @@ class Device {
   inline uint16_t Device_id() { return device_id; }
   inline uint16_t Vender_id() { return vender_id; }
   inline ClassCode Class_code() { return class_code; }
+
+  // Intel 社製であるとき true
+  bool isIntel() {
+    PCIio io;
+    return 0x8086 == io.ReadVendorId(bus, device_num, function);
+  }
 };
 
 class PCIManager {
