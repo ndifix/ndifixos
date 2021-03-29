@@ -6,7 +6,8 @@
 #include "font.hpp"
 #include "graphics.hpp"
 
-namespace ndifixos_console {
+namespace ndifixos {
+namespace console {
 void Console::NewLine() {
   cursor_C = 0;
   if (cursor_R == Rows - 1) {
@@ -20,8 +21,7 @@ void Console::NewLine() {
 
     for (int row = 0; row < Rows - 1; ++row) {
       memcpy(buffer[row], buffer[row + 1], Collumns + 1);
-      ndifixos_font::WriteString(writer, 0, char_height * row, buffer[row],
-                                 char_c);
+      font::WriteString(writer, 0, char_height * row, buffer[row], char_c);
     }
     memset(buffer[Rows - 1], 0, Collumns + 1);
   } else {
@@ -34,8 +34,8 @@ void Console::Print(const char* s) {
     if (*s == '\n' || cursor_C == Collumns) {
       NewLine();
     } else {
-      ndifixos_font::WriteAscii(writer, (char_width + 1) * cursor_C,
-                                char_height * cursor_R, *s, char_c);
+      font::WriteAscii(writer, (char_width + 1) * cursor_C,
+                       char_height * cursor_R, *s, char_c);
       buffer[cursor_R][cursor_C] = *s;
       ++cursor_C;
     }
@@ -56,4 +56,5 @@ int Console::Write(const char* format, ...) {
   return result;
 }
 
-}  // namespace ndifixos_console
+}  // namespace console
+}  // namespace ndifixos
