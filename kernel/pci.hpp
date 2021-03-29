@@ -8,6 +8,8 @@
 
 namespace ndifixos {
 namespace pci {
+class Device;
+
 class ClassCode {
  private:
   uint8_t base, sub, interface;
@@ -84,6 +86,8 @@ class PCIio {
    *         subordinate bus num  secoundary path num  revision num
    */
   uint32_t ReadBusNumbers(uint8_t bus, uint8_t device, uint8_t function);
+
+  uint32_t ReadConfReg(const Device& dev, uint8_t reg_addr);
 };
 
 // PCI デバイスを操作するための基礎データを格納する
@@ -106,13 +110,13 @@ class Device {
     this->class_code = class_code;
   }
 
-  inline uint8_t Bus() { return bus; }
-  inline uint8_t Device_num() { return device_num; }
-  inline uint8_t Function() { return function; }
-  inline uint8_t Header_type() { return header_type; }
-  inline uint16_t Device_id() { return device_id; }
-  inline uint16_t Vender_id() { return vender_id; }
-  inline ClassCode Class_code() { return class_code; }
+  inline uint8_t Bus() const { return bus; }
+  inline uint8_t Device_num() const { return device_num; }
+  inline uint8_t Function() const { return function; }
+  inline uint8_t Header_type() const { return header_type; }
+  inline uint16_t Device_id() const { return device_id; }
+  inline uint16_t Vender_id() const { return vender_id; }
+  inline ClassCode Class_code() const { return class_code; }
 
   // Intel 社製であるとき true
   bool isIntel() {
@@ -159,6 +163,10 @@ class PCIManager {
    * 発見したデバイスの数を num_devices に設定する．
    */
   Status ScanAllBus();
+
+  using ValWithStatus = status::ValWithStatus<uint64_t>;
+  // Base Address Register n を読みます
+  ValWithStatus ReadBar(Device& device, unsigned int bar_index);
 };
 
 }  // namespace pci

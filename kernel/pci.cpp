@@ -42,6 +42,12 @@ uint32_t PCIio::ReadBusNumbers(uint8_t bus, uint8_t device, uint8_t function) {
   return ReadData();
 }
 
+uint32_t PCIio::ReadConfReg(const Device& dev, uint8_t reg_addr) {
+  SetAddress(
+      MakeAddress(dev.Bus(), dev.Device_num(), dev.Function(), reg_addr));
+  return ReadData();
+}
+
 using Status = status::Status;
 // devices[num_device] に情報を書き込み num_device をインクリメントする
 Status PCIManager::AddDevice(uint8_t bus, uint8_t device, uint8_t function,
@@ -149,6 +155,31 @@ Status PCIManager::ScanAllBus() {
     }
   }
   return Status::Success;
+}
+
+// Base Address Register n を読みます
+PCIManager::ValWithStatus PCIManager::ReadBar(Device& device,
+                                              unsigned int bar_index) {
+  if (bar_index >= 6) {
+    return {0, Status::Success};
+  }
+
+  auto CalcBarAddress = [](unsigned int b) { return 0x10 + 4 * b; };
+  const auto addr = CalcBarAddress(bar_index);
+  const auto bar = pci_io.ReadConfReg(device, addr);
+
+  // 32 bit address
+  if ((bar & 4u) == 0) {
+    return {bar, Status::Success};
+  }
+
+  // 64 bit address
+  if (bar_index >= 5) {
+    return {0, Status::OutOfRange};
+  }
+
+  const auto bar_upper = pci_io.ReadConfReg(device, bar_index + 1);
+  return {bar | (static_cast<uint64_t>(bar_upper) << 32), Status::Success};
 }
 
 }  // namespace pci

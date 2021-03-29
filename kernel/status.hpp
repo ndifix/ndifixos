@@ -9,13 +9,20 @@ class Status {
     Success,
     Failed,
     Full,
+    OutOfRange,
   };
 
   Status(Code code) : code_{code} {}
-  bool isSuccess() { return this->code_ == Code::Success; }
+  bool isSuccess() const { return this->code_ == Code::Success; }
 
  private:
   Code code_;
+};
+
+template <class T>
+struct ValWithStatus {
+  T val;
+  Status status;
 };
 
 }  // namespace status

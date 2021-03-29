@@ -4,9 +4,14 @@
 #include "frame_buffer_config.hpp"
 #include "graphics.hpp"
 #include "pci.hpp"
+#include "status.hpp"
 
 ndifixos::pci::Device* FindXhc(ndifixos::pci::PCIManager&,
                                ndifixos::console::Console&);
+
+void Halt() {
+  while (1) __asm__("hlt");
+}
 
 extern "C" void KernelMain(
     const ndifixos::frameBuffer::FrameBufferConfig& config) {
@@ -25,7 +30,16 @@ extern "C" void KernelMain(
 
   ndifixos::pci::Device* xhc_dev = FindXhc(pci, console);
 
-  while (1) __asm__("hlt");
+  // 見つからなかった場合停止する
+  if (xhc_dev == nullptr) {
+    Halt();
+  }
+  const auto xhc_bar = pci.ReadBar(*xhc_dev, 0);
+  const uint64_t xhc_MMIO_base = xhc_bar.val & ~static_cast<uint64_t>(0xf);
+  console.Write("Read BAR: %s\n", xhc_bar.status.isSuccess() ? "ok" : "error");
+  console.Write("xHC MMIO base: %08x\n", xhc_MMIO_base);
+
+  Halt();
 }
 
 // xHC コントローラを探す。なければ nullptr を返す。
