@@ -52,7 +52,9 @@ Status PCIManager::AddDevice(uint8_t bus, uint8_t device, uint8_t function,
 
   uint16_t device_id = pci_io.ReadDeviceId(bus, device, function);
   uint16_t vender_id = pci_io.ReadVendorId(bus, device, function);
-  uint32_t class_code = pci_io.ReadClassCode(bus, device, function);
+  uint32_t code = pci_io.ReadClassCode(bus, device, function);
+  ClassCode class_code((code & 0xff000000) >> 24, (code & 0x00ff0000) >> 16,
+                       (code & 0x0000ff00) >> 8);
   Device newdevice(bus, device, function, header_type, device_id, vender_id,
                    class_code);
   devices[num_device] = newdevice;

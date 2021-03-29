@@ -8,17 +8,39 @@
 
 namespace ndifixos {
 namespace pci {
+class ClassCode {
+ private:
+  uint8_t base, sub, interface;
+
+ public:
+  ClassCode() {}
+  ClassCode(uint8_t base, uint8_t sub, uint8_t interface) {
+    this->base = base;
+    this->sub = sub;
+    this->interface = interface;
+  }
+
+  // ベースクラスが等しい場合 true
+  bool Match(uint8_t b) { return b == base; }
+  // ベースクラスとサブクラスが等しい場合 true
+  bool Match(uint8_t b, uint8_t s) { return Match(b) && s == sub; }
+  // ベース，サブ，インターフェースが等しい場合 true
+  bool Match(uint8_t b, uint8_t s, uint8_t i) {
+    return Match(b, s) && i == interface;
+  }
+};
+
 // PCI デバイスを操作するための基礎データを格納する
 class Device {
  private:
   uint8_t bus, device_num, function, header_type;
   uint16_t device_id, vender_id;
-  uint32_t class_code;
+  ClassCode class_code;
 
  public:
   Device() {}
   Device(uint8_t bus, uint8_t device_num, uint8_t function, uint8_t header_type,
-         uint16_t device_id, uint16_t vender_id, uint32_t class_code) {
+         uint16_t device_id, uint16_t vender_id, ClassCode class_code) {
     this->bus = bus;
     this->device_num = device_num;
     this->function = function;
@@ -34,7 +56,7 @@ class Device {
   inline uint8_t Header_type() { return header_type; }
   inline uint16_t Device_id() { return device_id; }
   inline uint16_t Vender_id() { return vender_id; }
-  inline uint32_t Class_code() { return class_code; }
+  inline ClassCode Class_code() { return class_code; }
 };
 
 class PCIio {
