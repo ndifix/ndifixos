@@ -4,7 +4,8 @@
 
 #include "frame_buffer_config.hpp"
 
-namespace ndifixos_graphics {
+namespace ndifixos {
+namespace graphics {
 
 struct PixelColor {
   uint8_t R, G, B;
@@ -13,7 +14,7 @@ struct PixelColor {
 // ピクセル毎に描画を管理します
 class PixelWriter {
  private:
-  ndifixos_FrameBuffer::FrameBufferConfig config;
+  frameBuffer::FrameBufferConfig config;
 
  protected:
   uint8_t* PixelAt(int x, int y) const {
@@ -22,19 +23,19 @@ class PixelWriter {
 
  public:
   PixelWriter() {}
-  PixelWriter(const ndifixos_FrameBuffer::FrameBufferConfig& c) : config(c) {}
+  PixelWriter(const frameBuffer::FrameBufferConfig& c) : config(c) {}
   ~PixelWriter() = default;
 
   // 指定された1ピクセルを指定した色で描画します
   void Write(int x, int y, PixelColor c) const {
     auto p = PixelAt(x, y);
     switch (config.pixel_format) {
-      case ndifixos_FrameBuffer::kPixelRGBResv8BitPerColor:
+      case frameBuffer::kPixelRGBResv8BitPerColor:
         p[0] = c.R;
         p[1] = c.G;
         p[2] = c.B;
         break;
-      case ndifixos_FrameBuffer::kPixelBGResv8BitPerColor:
+      case frameBuffer::kPixelBGResv8BitPerColor:
         p[0] = c.B;
         p[1] = c.G;
         p[2] = c.R;
@@ -51,4 +52,5 @@ class PixelWriter {
   }
 };
 
-}  // namespace ndifixos_graphics
+}  // namespace graphics
+}  // namespace ndifixos

@@ -8,7 +8,8 @@ extern const uint8_t _binary_ascii_bin_start;
 extern const uint8_t _binary_ascii_bin_end;
 extern const uint8_t _binary_ascii_bin_size;
 
-namespace ndifixos_font {
+namespace ndifixos {
+namespace font {
 // ascii.o を用いて16*8px のイメージを取得します
 const uint8_t* GetFont(char c) {
   auto index = 16 * static_cast<unsigned int>(c);
@@ -18,8 +19,8 @@ const uint8_t* GetFont(char c) {
   return &_binary_ascii_bin_start + index;
 }
 
-void const WriteAscii(ndifixos_graphics::PixelWriter& writer, int x, int y,
-                      char c, const ndifixos_graphics::PixelColor color) {
+void const WriteAscii(graphics::PixelWriter& writer, int x, int y, char c,
+                      const graphics::PixelColor color) {
   const uint8_t* font = GetFont(c);
 
   for (int dy = 0; dy < 16; ++dy) {
@@ -31,11 +32,12 @@ void const WriteAscii(ndifixos_graphics::PixelWriter& writer, int x, int y,
   }
 }
 
-void WriteString(ndifixos_graphics::PixelWriter& writer, int x, int y, char* c,
-                 const ndifixos_graphics::PixelColor& color) {
+void WriteString(graphics::PixelWriter& writer, int x, int y, char* c,
+                 const graphics::PixelColor& color) {
   for (char* pc = c; *pc != '\0'; pc++) {
     WriteAscii(writer, x, y, *pc, color);
     x += 9;
   }
 }
-}  // namespace ndifixos_font
+}  // namespace font
+}  // namespace ndifixos
