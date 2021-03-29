@@ -2,7 +2,8 @@
 
 #include <stdint.h>
 
-namespace ndifixos_FrameBuffer {
+namespace ndifixos {
+namespace frameBuffer {
 enum PixelFormat { kPixelRGBResv8BitPerColor, kPixelBGResv8BitPerColor };
 
 struct FrameBufferConfig {
@@ -13,5 +14,5 @@ struct FrameBufferConfig {
   uint32_t v_resolution;
   enum PixelFormat pixel_format;
 };
-
-}  // namespace ndifixos_FrameBuffer
+}  // namespace frameBuffer
+}  // namespace ndifixos
