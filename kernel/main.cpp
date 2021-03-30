@@ -5,6 +5,7 @@
 #include "graphics.hpp"
 #include "pci.hpp"
 #include "status.hpp"
+#include "usb/xhci/xhci.hpp"
 
 ndifixos::pci::Device* FindXhc(ndifixos::pci::PCIManager&,
                                ndifixos::console::Console&);
@@ -38,6 +39,7 @@ extern "C" void KernelMain(
   const uint64_t xhc_MMIO_base = xhc_bar.val & ~static_cast<uint64_t>(0xf);
   console.Write("Read BAR: %s\n", xhc_bar.status.isSuccess() ? "ok" : "error");
   console.Write("xHC MMIO base: %08x\n", xhc_MMIO_base);
+  ndifixos::usb::xhci::Controller controller(xhc_MMIO_base);
 
   Halt();
 }
