@@ -107,7 +107,7 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE image_handle,
   StopBootService(image_handle, &memmap);
 
   // call kernel
-  CallKernel(kernel_base_addr, &fb_config);
+  CallKernel(kernel_base_addr, &fb_config, &memmap);
 
   Halt();
 

@@ -5,6 +5,7 @@
 #include <Library/UefiLib.h>
 
 #include "frame_buffer_config.h"
+#include "memory_map.h"
 
 // カーネルを読み込みます
 EFI_STATUS ReadKernel(EFI_FILE_PROTOCOL* dir, CHAR16* file_name,
@@ -36,9 +37,10 @@ EFI_STATUS ReadKernel(EFI_FILE_PROTOCOL* dir, CHAR16* file_name,
 
 // カーネルを起動します
 void CallKernel(EFI_PHYSICAL_ADDRESS kernel_base_addr,
-                struct FrameBufferConfig* config) {
-  typedef void EntryPointType(const struct FrameBufferConfig*);
+                struct FrameBufferConfig* config, struct MemoryMap* memmap) {
+  typedef void EntryPointType(const struct FrameBufferConfig*,
+                              const struct MemoryMap*);
   UINT64 entry_addr = *(UINT64*)(kernel_base_addr + 24);
   EntryPointType* entry_point = (EntryPointType*)entry_addr;
-  entry_point(config);
+  entry_point(config, memmap);
 }
