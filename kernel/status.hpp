@@ -11,6 +11,7 @@ class Status {
     Full,
     OutOfRange,
     NoEnoughMemory,
+    InvalidDeviceId,
   };
 
   Status(Code code) : code_{code} {}
