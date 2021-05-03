@@ -10,6 +10,7 @@ class Status {
     Failed,
     Full,
     OutOfRange,
+    NoEnoughMemory,
   };
 
   Status(Code code) : code_{code} {}
