@@ -1,6 +1,6 @@
 TARGET = kernel.elf
 OBJS = main.o ascii.o newlib_support.o console.o pci.o asmfunc.o \
-usb/xhci/transfer_request_block.o
+usb/xhci/transfer_request_block.o usb/memory.o
 
 CFLAGS   += -O2 -Wall -g --target=x86_64-elf -ffreestanding -mno-red-zone
 CXXFLAGS += -O2 -Wall -g --target=x86_64-elf -ffreestanding -mno-red-zone \
