@@ -12,6 +12,7 @@ class Status {
     OutOfRange,
     NoEnoughMemory,
     InvalidDeviceId,
+    HostControllerNotHalted,
   };
 
   Status(Code code) : code_{code} {}
