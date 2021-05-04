@@ -161,7 +161,7 @@ Status PCIManager::ScanAllBus() {
 PCIManager::ValWithStatus PCIManager::ReadBar(Device& device,
                                               unsigned int bar_index) {
   if (bar_index >= 6) {
-    return {0, Status::Success};
+    return {0, Status::OutOfRange};
   }
 
   auto CalcBarAddress = [](unsigned int b) { return 0x10 + 4 * b; };
@@ -178,7 +178,7 @@ PCIManager::ValWithStatus PCIManager::ReadBar(Device& device,
     return {0, Status::OutOfRange};
   }
 
-  const auto bar_upper = pci_io.ReadConfReg(device, bar_index + 1);
+  const auto bar_upper = pci_io.ReadConfReg(device, addr + 4);
   return {bar | (static_cast<uint64_t>(bar_upper) << 32), Status::Success};
 }
 

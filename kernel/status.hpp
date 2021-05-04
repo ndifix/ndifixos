@@ -18,6 +18,25 @@ class Status {
   Status(Code code) : code_{code} {}
   bool isSuccess() const { return this->code_ == Code::Success; }
 
+  const char* Name() {
+    switch (code_) {
+      case Success:
+        return "Success";
+      case Failed:
+        return "Failed";
+      case Full:
+        return "Full";
+      case OutOfRange:
+        return "OutOfRange";
+      case NoEnoughMemory:
+        return "NoEnoughMemory";
+      case InvalidDeviceId:
+        return "InvalidDeviceId";
+      case HostControllerNotHalted:
+        return "HostControllerNotHalted";
+    }
+  }
+
  private:
   Code code_;
 };

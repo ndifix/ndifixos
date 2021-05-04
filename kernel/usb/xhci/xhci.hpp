@@ -46,7 +46,7 @@ class Controller {
   EventRing* PrimaryEventRing() { return &event_ring; }
   DoorbellRegister* DoorbellRegisterAt(uint8_t index);
   Port PortAt(uint8_t port_num) {
-    return Port{port_num, PortRegisterSets()[port_num - 1]};
+    return Port{port_num, PortRegisterSets()[port_num]};
   }
   uint8_t MaxPorts() const { return max_ports; }
   DeviceManager* DeviceManager() { return &device_manager; }

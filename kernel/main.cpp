@@ -35,11 +35,17 @@ extern "C" void KernelMain(
   if (xhc_dev == nullptr) {
     Halt();
   }
+
   const auto xhc_bar = pci.ReadBar(*xhc_dev, 0);
   const uintptr_t xhc_MMIO_base = xhc_bar.val & ~static_cast<uint64_t>(0xf);
   console.Write("Read BAR: %s\n", xhc_bar.status.isSuccess() ? "ok" : "error");
-  console.Write("xHC MMIO base: %08x\n", xhc_MMIO_base);
+  console.Write("xHC MMIO base: %08lx\n", xhc_MMIO_base);
+
   ndifixos::usb::xhci::Controller controller(xhc_MMIO_base);
+  ndifixos::status::Status stat = controller.Initialize();
+  console.Write("xHC initialize: %s\n", stat.Name());
+  console.Write("xHC starting\n");
+  controller.Run();
 
   Halt();
 }
