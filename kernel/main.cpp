@@ -58,6 +58,13 @@ extern "C" void KernelMain(
     }
   }
 
+  while (true) {
+    auto status = controller.ProcessEvent();
+    if (!status.isSuccess()) {
+      console.Write("error on processing xHC event: %s\n", status.Name());
+    }
+  }
+
   Halt();
 }
 

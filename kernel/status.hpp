@@ -14,6 +14,7 @@ class Status {
     InvalidDeviceId,
     HostControllerNotHalted,
     InvalidPhase,
+    NotImpl,
   };
 
   Status(Code code) : code_{code} {}
@@ -37,6 +38,8 @@ class Status {
         return "HostControllerNotHalted";
       case InvalidPhase:
         return "InvalidPhase";
+      case NotImpl:
+        return "NotImpl";
     }
   }
 

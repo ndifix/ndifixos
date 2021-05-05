@@ -147,4 +147,50 @@ status::Status Controller::ResetPort(Port& port) {
 
   return Status::Success;
 }
+
+status::Status Controller::ProcessEvent() {
+  if (!event_ring.HasFront()) {
+    return status::Status::Success;
+  }
+
+  status::Status status(status::Status::Success);
+  auto event_trb = event_ring.Front();
+  event_ring.Pop();
+
+  if (auto trb = TRBDynamicCast<PortStatusChangeEventTRB>(event_trb)) {
+    OnEvent(*trb);
+  }
+
+  return status::Status::NotImpl;
+}
+
+status::Status Controller::EnableSlot(Port& port) {
+  if (port.IsEnabled() && port.IsPortResetChanged()) {
+    port.ClearPortResetChange();
+
+    port_config_phase[port.Number()] = ConfigPhase::EnablingSlot;
+
+    EnableSlotCommandTRB cmd{};
+    CommandRing()->Push(cmd);
+    DoorbellRegisterAt(0)->Ring(0);
+  }
+  return status::Status::Success;
+}
+
+status::Status Controller::OnEvent(PortStatusChangeEventTRB& trb) {
+  auto port_id = trb.bits.port_id;
+  auto port = PortAt(port_id);
+
+  switch (port_config_phase[port_id]) {
+    case ConfigPhase::NotConnected:
+      return ResetPort(port);
+    case ConfigPhase::ResettingPort:
+      return EnableSlot(port);
+    default:
+      return status::Status::InvalidPhase;
+  }
+
+  return status::Status::Success;
+}
+
 }  // namespace ndifixos::usb::xhci

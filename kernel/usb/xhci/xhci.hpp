@@ -39,6 +39,8 @@ class Controller {
   }
 
   status::Status ResetPort(Port& port);
+  status::Status EnableSlot(Port& port);
+  status::Status OnEvent(PortStatusChangeEventTRB& trb);
 
  public:
   Controller(uintptr_t mmio_base);
@@ -54,6 +56,7 @@ class Controller {
   DeviceManager* DeviceManager() { return &device_manager; }
 
   status::Status ConfigurePort(Port& port);
+  status::Status ProcessEvent();
 };
 
 }  // namespace xhci

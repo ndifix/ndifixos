@@ -19,6 +19,10 @@ bool Port::IsConnectStatusChanged() const {
   return port_reg_set.PORTSC.Read().bits.connect_status_change;
 }
 
+bool Port::IsPortResetChanged() const {
+  return port_reg_set.PORTSC.Read().bits.port_reset_change;
+}
+
 int Port::Speed() const { return port_reg_set.PORTSC.Read().bits.port_speed; }
 
 status::Status Port::Reset() {
