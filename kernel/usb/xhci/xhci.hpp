@@ -38,6 +38,8 @@ class Controller {
     return {mmio_base + cap_reg->DBOFF.Read().Offset(), 256};
   }
 
+  status::Status ResetPort(Port& port);
+
  public:
   Controller(uintptr_t mmio_base);
   status::Status Initialize();
@@ -50,6 +52,8 @@ class Controller {
   }
   uint8_t MaxPorts() const { return max_ports; }
   DeviceManager* DeviceManager() { return &device_manager; }
+
+  status::Status ConfigurePort(Port& port);
 };
 
 }  // namespace xhci

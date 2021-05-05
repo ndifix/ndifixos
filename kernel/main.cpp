@@ -47,6 +47,17 @@ extern "C" void KernelMain(
   console.Write("xHC starting\n");
   controller.Run();
 
+  for (int i = 0; i < controller.MaxPorts(); ++i) {
+    ndifixos::usb::xhci::Port port = controller.PortAt(i);
+
+    if (port.IsConnected()) {
+      auto stat = controller.ConfigurePort(port);
+      if (!stat.isSuccess()) {
+        console.Write("failed to configure port: %s\n");
+      }
+    }
+  }
+
   Halt();
 }
 

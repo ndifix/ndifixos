@@ -12,6 +12,22 @@ Status RegisterCommandRing(Ring* ring, MemMapRegister<CRCR_Bitmap>* crcr) {
   crcr->Write(value);
   return Status::Success;
 }
+
+enum class ConfigPhase {
+  NotConnected,
+  WaitingForAddressed,
+  ResettingPort,
+  EnablingSlot,
+  AddressingDevice,
+  InitializingDevice,
+  ConfiguringEndpoints,
+  Configured,
+};
+
+// ResettingPort から AddressingDevce までの処理を実行中のポート番号
+uint8_t addressing_port = 0xff;
+
+std::array<volatile ConfigPhase, 256> port_config_phase{};
 }  // namespace
 
 namespace ndifixos::usb::xhci {
@@ -99,5 +115,36 @@ status::Status Controller::Run() {
 
 DoorbellRegister* Controller::DoorbellRegisterAt(uint8_t index) {
   return &DoorbellRegisters()[index];
+}
+
+status::Status Controller::ConfigurePort(Port& port) {
+  if (port_config_phase[port.Number()] == ConfigPhase::NotConnected) {
+    return ResetPort(port);
+  }
+  return status::Status::Success;
+}
+
+status::Status Controller::ResetPort(Port& port) {
+  const bool is_connected = port.IsConnected();
+  if (!is_connected) {
+    return Status::Success;
+  }
+
+  if (addressing_port == 0xff) {
+    port_config_phase[port.Number()] = ConfigPhase::WaitingForAddressed;
+    return Status::Success;
+  }
+
+  const auto port_phase = port_config_phase[port.Number()];
+  if (port_phase != ConfigPhase::NotConnected &&
+      port_phase != ConfigPhase::WaitingForAddressed) {
+    return Status::InvalidPhase;
+  }
+
+  addressing_port = port.Number();
+  port_config_phase[port.Number()] = ConfigPhase::ResettingPort;
+  port.Reset();
+
+  return Status::Success;
 }
 }  // namespace ndifixos::usb::xhci

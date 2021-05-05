@@ -13,6 +13,7 @@ class Status {
     NoEnoughMemory,
     InvalidDeviceId,
     HostControllerNotHalted,
+    InvalidPhase,
   };
 
   Status(Code code) : code_{code} {}
@@ -34,6 +35,8 @@ class Status {
         return "InvalidDeviceId";
       case HostControllerNotHalted:
         return "HostControllerNotHalted";
+      case InvalidPhase:
+        return "InvalidPhase";
     }
   }
 
