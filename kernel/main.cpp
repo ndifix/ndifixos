@@ -4,6 +4,7 @@
 #include "frame_buffer_config.hpp"
 #include "graphics.hpp"
 #include "memory/memory_map.hpp"
+#include "memory/memory_manager.hpp"
 
 extern "C" void KernelMain(
     const ndifixos::frameBuffer::FrameBufferConfig& config,
@@ -13,6 +14,7 @@ extern "C" void KernelMain(
   ndifixos::console::Console console(writer);
   console.Write("ndifix os\n");
 
+  ndifixos::memory::InitMemoryManager(memmap);
   for (uintptr_t iter = reinterpret_cast<uintptr_t>(memmap.buffer);
        iter < reinterpret_cast<uintptr_t>(memmap.buffer) + memmap.map_size;
        iter += memmap.descriptor_size) {

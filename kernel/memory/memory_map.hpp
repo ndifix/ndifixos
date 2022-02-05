@@ -45,15 +45,15 @@ enum class MemoryType {
   EfiMaxMemoryType,
 };
 
-bool operator==(uint32_t t, MemoryType type) {
+inline bool operator==(uint32_t t, MemoryType type) {
   return t == static_cast<uint32_t>(type);
 }
 
-bool operator==(MemoryType type, uint32_t t) {
+inline bool operator==(MemoryType type, uint32_t t) {
   return t == static_cast<uint32_t>(type);
 }
 
-bool IsAvailableMemoryType(uint32_t type) {
+inline bool IsAvailableMemoryType(uint32_t type) {
   return type == MemoryType::EfiBootServicesCode ||
          type == MemoryType::EfiBootServicesData ||
          type == MemoryType::EfiConventionalMemory;
