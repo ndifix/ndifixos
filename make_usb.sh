@@ -1,5 +1,5 @@
 cd ~/ndifixos/
-source build.sh
+./build.sh
 sudo mkdir -p /mnt/usbmem
 sudo mount -t drvfs D: /mnt/usbmem
 sudo mkdir -p /mnt/usbmem/EFI/BOOT
