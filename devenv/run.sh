@@ -1,5 +1,6 @@
-ROOTDIR=$(realpath $(cd $(dirname $0); pwd)/..)
+ROOTDIR=$(realpath $(dirname $0)/..)
 DEVENV=${ROOTDIR}/devenv
 
+source ${DEVENV}/var.sh
 ${DEVENV}/build.sh
-~/osbook/devenv/run_qemu.sh ~/edk2/Build/ndifixLoaderX64/DEBUG_CLANG38/X64/Loader.efi ~/ndifixos/kernel/kernel.elf
+~/osbook/devenv/run_qemu.sh $EDK_OUT $KERNEL_OUT
