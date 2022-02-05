@@ -1,11 +1,13 @@
 ROOTDIR=$(realpath $(dirname $0)/..)
 DEVENV=${ROOTDIR}/devenv
 
+MOUNT_POINT=/mnt/usbmem
+
 source ${DEVENV}/var.sh
 ${DEVENV}/build.sh
-sudo mkdir -p /mnt/usbmem
-sudo mount -t drvfs D: /mnt/usbmem
-sudo mkdir -p /mnt/usbmem/EFI/BOOT
-sudo cp $EDK_OUT /mnt/usbmem/EFI/BOOT/BOOTX64.EFI
-sudo cp ~/ndifixos/kernel/kernel.elf /mnt/usbmem
-sudo umount /mnt/usbmem
+sudo mkdir -p $MOUNT_POINT
+sudo mount -t drvfs D: $MOUNT_POINT
+sudo mkdir -p ${MOUNT_POINT}/EFI/BOOT
+sudo cp $EDK_OUT ${MOUNT_POINT}/EFI/BOOT/BOOTX64.EFI
+sudo cp ~/ndifixos/kernel/kernel.elf $MOUNT_POINT
+sudo umount $MOUNT_POINT
