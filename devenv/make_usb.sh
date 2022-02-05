@@ -1,4 +1,7 @@
-./build.sh
+ROOTDIR=$(realpath $(cd $(dirname $0); pwd)/..)
+DEVENV=${ROOTDIR}/devenv
+
+${DEVENV}/build.sh
 sudo mkdir -p /mnt/usbmem
 sudo mount -t drvfs D: /mnt/usbmem
 sudo mkdir -p /mnt/usbmem/EFI/BOOT
